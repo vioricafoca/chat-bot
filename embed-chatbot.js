@@ -1,7 +1,7 @@
 (function() {
   async function loadChatbot() {
     try {
-      const response = await fetch('https://github.com/vioricafoca/chat-bot/blob/2d0d24640a6d6352ed7784ea94f0090a6aecbfb7/chat-bot');
+      const response = await fetch('https://github.com/vioricafoca/chat-bot/blob/a93d2f6ec8e859b080ae4349c22e713913eb2b25/chat-bot');
       const content = await response.text();
       const container = document.createElement('div');
       container.innerHTML = content;
