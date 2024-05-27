@@ -109,7 +109,7 @@ async function fetchBotResponse(userInput) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer 8e8382566a410224423397b76dc7561a`
+        Authorization: `Bearer sk-proj-z0I4WSQL4oYcjaUSCSGkT3BlbkFJEi9N2twwOoIU3YTxD7gF`
       },
       body: JSON.stringify({
         model: "gpt-4", // Use "gpt-3.5-turbo" if you are on the lower tier plan
