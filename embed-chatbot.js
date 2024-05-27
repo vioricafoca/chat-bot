@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
   <link rel="stylesheet" href="chat-bot.css">
-  <script src="chat-bot.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/vioricafoca/chat-bot@b82d5288a9aff01342de642020459177cfb49422/chat-bot.js"></script>
 </head>
 <body>
   <div id="chat" class="bpw-layout">
