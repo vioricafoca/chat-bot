@@ -6,11 +6,11 @@
   link.rel = 'stylesheet';
   document.head.appendChild(link);
 
-  // Add HTML for the chatbot
+  // Add chatbot interface HTML
   var chatDiv = document.createElement('div');
   chatDiv.id = 'chat';
   chatDiv.innerHTML = `
-    <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -74,7 +74,7 @@
   document.body.appendChild(script);
 })();
 
-// This function can be called to initialize the chatbot
+// Initialization function, if necessary
 function initializeChatbot() {
   // Your chatbot initialization code
 }
