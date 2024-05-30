@@ -74,8 +74,9 @@ function clearChat() {
 }
 
 function handleUserInput() {
-  if (isDeleting) {
-    document.querySelector(".confirmation-prompt-message").remove();
+  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  if (confirmationMessage) {
+    confirmationMessage.remove();
     isDeleting = false; // Reset the deletion flag
   }
   sendMessage();
@@ -143,11 +144,11 @@ function isChatEmpty() {
   return messagesDiv.children.length === 0;
 }
 
-async function sendMessage() {
+async function sendMessage(message = null) {
   if (isSending || isDeleting) return; // Exit if a message is already being sent or chat is being deleted
   isSending = true; // Set the flag to indicate a message is being sent
 
-  const input = document.getElementById("user-input").value;
+  const input = message || document.getElementById("user-input").value;
   if (input.trim() === "") {
     isSending = false; // Reset the flag if input is empty
     return;
@@ -166,7 +167,9 @@ async function sendMessage() {
   fadeOutSuggestions();
 
   displayMessage("User", input);
-  document.getElementById("user-input").value = "";
+  if (!message) {
+    document.getElementById("user-input").value = "";
+  }
 
   const botResponse = await fetchBotResponse(input);
 
@@ -268,8 +271,12 @@ function displayMessage(sender, message, callback) {
 }
 
 function fillInput(suggestion) {
-  document.getElementById("user-input").value = suggestion;
-  handleUserInput();
+  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  if (confirmationMessage) {
+    confirmationMessage.remove();
+    isDeleting = false; // Reset the deletion flag
+  }
+  sendMessage(suggestion); // Send the suggestion directly
 }
 
 function handleInputChange(event) {
