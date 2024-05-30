@@ -18,6 +18,23 @@
     xhr.send();
   }
 
+  function loadScript(url, callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Authorization', `token ${token}`);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        const scriptContent = atob(response.content);
+        const script = document.createElement('script');
+        script.text = scriptContent;
+        document.body.appendChild(script);
+        if (callback) callback();
+      }
+    };
+    xhr.send();
+  }
+
   // Load CSS dynamically
   loadCSS('https://api.github.com/repos/vioricafoca/chat-bot/contents/chat-bot.css', function() {
     // Load FontAwesome and Material Design Iconic Font dynamically
@@ -42,21 +59,20 @@
         document.body.insertAdjacentHTML('beforeend', htmlContent);
 
         // Load JavaScript dynamically
-        const scriptXhr = new XMLHttpRequest();
-        scriptXhr.open('GET', 'https://api.github.com/repos/vioricafoca/chat-bot/contents/chat-bot.js', true);
-        scriptXhr.setRequestHeader('Authorization', `token ${token}`);
-        scriptXhr.onreadystatechange = function() {
-          if (scriptXhr.readyState === 4 && scriptXhr.status === 200) {
-            const scriptResponse = JSON.parse(scriptXhr.responseText);
-            const scriptContent = atob(scriptResponse.content);
-            const script = document.createElement('script');
-            script.text = scriptContent;
-            document.body.appendChild(script);
-          }
-        };
-        scriptXhr.send();
+        loadScript('https://api.github.com/repos/vioricafoca/chat-bot/contents/chat-bot.js', function() {
+          // Ensure all scripts are loaded before attaching event listeners
+          attachEventListeners();
+        });
       }
     };
     xhr.send();
   });
+
+  function attachEventListeners() {
+    document.querySelectorAll('.delete-button').forEach(button => {
+      button.addEventListener('click', function() {
+        this.parentElement.remove();
+      });
+    });
+  }
 })();
