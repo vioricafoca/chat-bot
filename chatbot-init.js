@@ -37,6 +37,7 @@
 
   // Load CSS dynamically
   loadCSS('https://api.github.com/repos/vioricafoca/chat-bot/contents/chat-bot.css', function() {
+    console.log('CSS loaded successfully');
     // Load FontAwesome and Material Design Iconic Font dynamically
     const faLink = document.createElement('link');
     faLink.rel = 'stylesheet';
@@ -57,9 +58,11 @@
         const response = JSON.parse(xhr.responseText);
         const htmlContent = atob(response.content);
         document.body.insertAdjacentHTML('beforeend', htmlContent);
+        console.log('HTML loaded successfully');
 
         // Load JavaScript dynamically
         loadScript('https://api.github.com/repos/vioricafoca/chat-bot/contents/chat-bot.js', function() {
+          console.log('JavaScript loaded successfully');
           // Ensure all scripts are loaded before attaching event listeners
           attachEventListeners();
         });
@@ -69,10 +72,13 @@
   });
 
   function attachEventListeners() {
+    console.log('Attaching event listeners');
     document.querySelectorAll('.delete-button').forEach(button => {
       button.addEventListener('click', function() {
+        console.log('Delete button clicked');
         this.parentElement.remove();
       });
     });
+    console.log('Event listeners attached');
   }
 })();
