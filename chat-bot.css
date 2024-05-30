@@ -123,6 +123,55 @@ body {
   text-align: left;
   border-radius: 10px;
 }
+.confirmation-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f1ef;
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.confirmation-message i {
+  margin-left: 10px;
+  color: green;
+}
+
+.confirmation-prompt-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f1ef;
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.confirmation-prompt-message div {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px; /* Add margin to space out buttons */
+}
+
+.confirmation-prompt-message button {
+  background-color: #6675fa;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 0 5px; /* Adjusted margin for buttons */
+  cursor: pointer;
+}
+
+.confirmation-prompt-message button:hover {
+  background-color: #4b5cb4;
+}
 
 .message-content {
   padding: 10px;
