@@ -1,21 +1,86 @@
 document.addEventListener("DOMContentLoaded", () => {
   const deleteButton = document.getElementById("btn-delete");
-  deleteButton.addEventListener("click", confirmAndClearChat);
+  deleteButton.addEventListener("click", () => {
+    isDeleting = true; // Set the flag to indicate a deletion process
+    showConfirmationPrompt();
+  });
+  const userInput = document.getElementById("user-input");
+  userInput.addEventListener("input", handleInputChange);
+  const sendButton = document.getElementById("send-button");
+  sendButton.addEventListener("click", handleUserInput);
+  userInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      handleUserInput();
+    }
+  });
 });
-function confirmAndClearChat() {
-  if (
-    confirm(
-      "Are you sure you want to delete the chat? This action cannot be undone."
-    )
-  ) {
-    clearChat();
+
+let isSending = false; // Add a flag to track the sending status
+let isDeleting = false; // Add a flag to track the deletion status
+
+function showConfirmationPrompt() {
+  const messagesDiv = document.getElementById("messages");
+
+  const existingConfirmationPrompt = document.querySelector(".confirmation-prompt-message");
+  if (existingConfirmationPrompt) {
+    return;
   }
+
+  const confirmationMessage = document.createElement("div");
+  confirmationMessage.className = "message bot confirmation-prompt-message";
+  confirmationMessage.innerHTML = `
+    <span>Would you like to delete the conversation?</span>
+    <div>
+      <button id="confirm-yes" class="confirmation-button">Yes</button>
+      <button id="confirm-no" class="confirmation-button">No</button>
+    </div>
+  `;
+
+  messagesDiv.insertBefore(confirmationMessage, messagesDiv.firstChild);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  const confirmYesButton = document.getElementById("confirm-yes");
+  const confirmNoButton = document.getElementById("confirm-no");
+
+  confirmYesButton.addEventListener("click", () => {
+    clearChat();
+    confirmationMessage.remove();
+    clearTimeout(hideTimeout);
+  });
+
+  confirmNoButton.addEventListener("click", () => {
+    confirmationMessage.remove();
+    clearTimeout(hideTimeout);
+    isDeleting = false; // Reset the flag if deletion is canceled
+  });
+
+  const hideTimeout = setTimeout(() => {
+    confirmationMessage.remove();
+    isDeleting = false; // Reset the flag if deletion prompt times out
+  }, 5000);
 }
+
 function clearChat() {
   const messagesDiv = document.getElementById("messages");
-  messagesDiv.innerHTML = ""; // Clear all messages
-  startConversation(); // Display the initial messages again
+  const allMessages = Array.from(messagesDiv.children);
+
+  const initialMessages = allMessages.filter(msg => !msg.classList.contains("user") && !msg.classList.contains("bot"));
+
+  messagesDiv.innerHTML = "";
+
+  initialMessages.forEach(msg => messagesDiv.appendChild(msg));
+
+  isDeleting = false; // Reset the deletion flag after the chat is cleared
 }
+
+function handleUserInput() {
+  if (isDeleting) {
+    document.querySelector(".confirmation-prompt-message").remove();
+    isDeleting = false; // Reset the deletion flag
+  }
+  sendMessage();
+}
+
 function toggleChat() {
   const chat = document.getElementById("chat");
   const chatIcon = document.getElementById("chat-icon");
@@ -26,7 +91,7 @@ function toggleChat() {
       chat.style.opacity = "1";
       chatIcon.style.display = "none";
       if (isChatEmpty()) {
-        startConversation(); // Start the conversation with an initial message only if chat is empty
+        startConversation();
       }
     });
   } else {
@@ -43,65 +108,111 @@ function toggleChat() {
     );
   }
 }
+
 function startConversation() {
   const initialMessages = [
     "Greetings! I am Mrs. Chatnel, your dedicated chatbot design assistant. I am here to assist you in creating a splendid and stylish chatbot for your website.",
     "Would you like a guided tour of the webchat styler, or are you already familiar with its capabilities? :dancer:"
   ];
-  displayMessageSequentially(initialMessages, 0);
+  displayMessagesSimultaneously(initialMessages);
 }
-function displayMessageSequentially(messages, index) {
-  if (index < messages.length) {
-    displayMessage("Bot", messages[index], () => {
-      displayMessageSequentially(messages, index + 1);
-    });
-  }
+
+function displayMessagesSimultaneously(messages) {
+  const messagesDiv = document.getElementById("messages");
+
+  messages.forEach((message, index) => {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message bot w3-animate-bottom`;
+    const profilePic = document.createElement("div");
+    profilePic.className = "profile-pic";
+    profilePic.style.backgroundImage =
+      "url('https://sg8ebf.p3cdn2.secureserver.net/wp-content/uploads/2013/05/Virtual-Assistant.jpg')";
+    const messageContent = document.createElement("div");
+    messageContent.className = "message-content";
+    messageContent.innerText = message;
+    messageDiv.appendChild(profilePic);
+    messageDiv.appendChild(messageContent);
+    messagesDiv.appendChild(messageDiv);
+  });
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
 function isChatEmpty() {
   const messagesDiv = document.getElementById("messages");
   return messagesDiv.children.length === 0;
 }
+
 async function sendMessage() {
+  if (isSending || isDeleting) return; // Exit if a message is already being sent or chat is being deleted
+  isSending = true; // Set the flag to indicate a message is being sent
+
   const input = document.getElementById("user-input").value;
-  if (input.trim() === "") return;
-  // Hide suggestions and show loading indicator
+  if (input.trim() === "") {
+    isSending = false; // Reset the flag if input is empty
+    return;
+  }
+
+  const successMessage = document.querySelector(".confirmation-message");
+  if (successMessage) {
+    successMessage.remove();
+  }
+
+  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  if (confirmationMessage) {
+    confirmationMessage.remove();
+  }
+
   fadeOutSuggestions();
-  // Display the user's message
+
   displayMessage("User", input);
   document.getElementById("user-input").value = "";
-  // Fetch the bot's response
+
   const botResponse = await fetchBotResponse(input);
-  // Hide loading indicator and display the bot's response with a delay
+
+  if (isDeleting) {
+    isSending = false; // Reset the flag if deletion starts
+    return;
+  }
+
   setTimeout(() => {
     hideLoadingIndicator();
-    displayMessage("Bot", botResponse);
-    showSuggestions(); // Show suggestions after the response is displayed
+    if (!isDeleting) {
+      displayMessage("Bot", botResponse);
+    }
+    showSuggestions();
+    isSending = false; // Reset the flag after receiving the response
   }, 1000);
 }
+
 function displayLoadingIndicator() {
   const dotsContainer = document.querySelector(".dotsContainer");
-  dotsContainer.style.display = "flex"; // Show the dots animation
+  dotsContainer.style.display = "flex";
 }
+
 function hideLoadingIndicator() {
   const dotsContainer = document.querySelector(".dotsContainer");
-  dotsContainer.style.display = "none"; // Hide the dots animation
+  dotsContainer.style.display = "none";
 }
+
 function fadeOutSuggestions() {
   const suggestions = document.getElementById("suggestions");
   suggestions.style.opacity = "0";
   setTimeout(() => {
     suggestions.style.display = "none";
     displayLoadingIndicator();
-  }, 500); // Match this duration to the CSS transition duration
+  }, 500);
 }
+
 function showSuggestions() {
   const suggestions = document.getElementById("suggestions");
   suggestions.style.display = "block";
   setTimeout(() => {
     suggestions.style.opacity = "1";
-  }, 10); // Small delay to ensure display property takes effect before opacity transition
-  adjustInputSectionPosition(); // Adjust input section position
+  }, 10);
+  adjustInputSectionPosition();
 }
+
 async function fetchBotResponse(userInput) {
   let botResponse = "I did not understand that.";
   try {
@@ -109,10 +220,10 @@ async function fetchBotResponse(userInput) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer 8e8382566a410224423397b76dc7561a`
+        Authorization: `Bearer YOUR_API_KEY`
       },
       body: JSON.stringify({
-        model: "gpt-4", // Use "gpt-3.5-turbo" if you are on the lower tier plan
+        model: "gpt-4",
         messages: [
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: userInput }
@@ -121,7 +232,7 @@ async function fetchBotResponse(userInput) {
       })
     });
     const data = await response.json();
-    console.log("API Response:", data); // Log the entire response for debugging
+    console.log("API Response:", data);
     if (data.choices && data.choices.length > 0) {
       botResponse = data.choices[0].message.content.trim();
     } else {
@@ -133,10 +244,11 @@ async function fetchBotResponse(userInput) {
   }
   return botResponse;
 }
+
 function displayMessage(sender, message, callback) {
   const messagesDiv = document.getElementById("messages");
   const messageDiv = document.createElement("div");
-  messageDiv.className = `message ${sender.toLowerCase()} w3-animate-bottom`; // Add the W3.CSS animation class
+  messageDiv.className = `message ${sender.toLowerCase()} w3-animate-bottom`;
   const profilePic = document.createElement("div");
   profilePic.className = "profile-pic";
   profilePic.style.backgroundImage =
@@ -149,16 +261,17 @@ function displayMessage(sender, message, callback) {
   messageDiv.appendChild(profilePic);
   messageDiv.appendChild(messageContent);
   messagesDiv.insertBefore(messageDiv, messagesDiv.firstChild);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
-  // Check if a callback function is provided and execute it
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
   if (callback) {
     messageDiv.addEventListener("animationend", callback, { once: true });
   }
 }
+
 function fillInput(suggestion) {
   document.getElementById("user-input").value = suggestion;
-  sendMessage();
+  handleUserInput();
 }
+
 function handleInputChange(event) {
   const sendButton = document.getElementById("send-button");
   const input = event.target.value.trim();
@@ -168,11 +281,13 @@ function handleInputChange(event) {
     sendButton.classList.remove("visible");
   }
 }
+
 function handleKeyPress(event) {
   if (event.key === "Enter") {
-    sendMessage();
+    handleUserInput();
   }
 }
+
 function adjustInputSectionPosition() {
   const inputSectionWrapper = document.getElementById("input-section-wrapper");
   const suggestions = document.getElementById("suggestions");
