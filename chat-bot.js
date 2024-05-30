@@ -81,58 +81,101 @@ async function sendMessage() {
   try {
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
+
       method: "POST",
+
       headers: {
+
         "Content-Type": "application/json",
+
         Authorization: `Bearer 8e8382566a410224423397b76dc7561a`
+
       },
+
       body: JSON.stringify({
+
         model: "gpt-4", // Use "gpt-3.5-turbo" if you are on the lower tier plan
+
         messages: [
+
           { role: "system", content: "You are a helpful assistant." },
+
           { role: "user", content: userInput }
+
         ],
+
         max_tokens: 150
+
       })
+
     });
+
     const data = await response.json();
+
     console.log("API Response:", data); // Log the entire response for debugging
+
     if (data.choices && data.choices.length > 0) {
+
       botResponse = data.choices[0].message.content.trim();
+
     } else {
+
       console.error("No choices in response:", data);
+
     }
+
   } catch (error) {
+
     botResponse = "Sorry, I'm having trouble connecting to the server.";
+
     console.error("Error fetching bot response:", error);
+
   }
+
   return botResponse;
+
 }
 
 function displayMessage(sender, message, callback) {
+
   const messagesDiv = document.getElementById("messages");
+
   const messageDiv = document.createElement("div");
+
   messageDiv.className = `message ${sender.toLowerCase()} w3-animate-bottom`; // Add the W3.CSS animation class
+
   const profilePic = document.createElement("div");
+
   profilePic.className = "profile-pic";
+
   profilePic.style.backgroundImage =
+
     sender === "Bot"
+
       ? "url('https://sg8ebf.p3cdn2.secureserver.net/wp-content/uploads/2013/05/Virtual-Assistant.jpg')"
 
       : "url('https://via.placeholder.com/40/0000FF/FFFFFF?text=U')";
 
   const messageContent = document.createElement("div");
+
   messageContent.className = "message-content";
+
   messageContent.innerText = message;
+
   messageDiv.appendChild(profilePic);
+
   messageDiv.appendChild(messageContent);
+
   messagesDiv.insertBefore(messageDiv, messagesDiv.firstChild);
+
   messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
 
   // Check if a callback function is provided and execute it
 
   if (callback) {
+
     messageDiv.addEventListener("animationend", callback, { once: true });
+
   }
 
 }
