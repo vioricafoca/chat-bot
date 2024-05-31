@@ -21,7 +21,9 @@ let isDeleting = false; // Add a flag to track the deletion status
 function showConfirmationPrompt() {
   const messagesDiv = document.getElementById("messages");
 
-  const existingConfirmationPrompt = document.querySelector(".confirmation-prompt-message");
+  const existingConfirmationPrompt = document.querySelector(
+    ".confirmation-prompt-message"
+  );
   if (existingConfirmationPrompt) {
     return;
   }
@@ -64,17 +66,21 @@ function clearChat() {
   const messagesDiv = document.getElementById("messages");
   const allMessages = Array.from(messagesDiv.children);
 
-  const initialMessages = allMessages.filter(msg => !msg.classList.contains("user") && !msg.classList.contains("bot"));
+  const initialMessages = allMessages.filter(
+    (msg) => !msg.classList.contains("user") && !msg.classList.contains("bot")
+  );
 
   messagesDiv.innerHTML = "";
 
-  initialMessages.forEach(msg => messagesDiv.appendChild(msg));
+  initialMessages.forEach((msg) => messagesDiv.appendChild(msg));
 
   isDeleting = false; // Reset the deletion flag after the chat is cleared
 }
 
 function handleUserInput() {
-  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  const confirmationMessage = document.querySelector(
+    ".confirmation-prompt-message"
+  );
   if (confirmationMessage) {
     confirmationMessage.remove();
     isDeleting = false; // Reset the deletion flag
@@ -159,7 +165,9 @@ async function sendMessage(message = null) {
     successMessage.remove();
   }
 
-  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  const confirmationMessage = document.querySelector(
+    ".confirmation-prompt-message"
+  );
   if (confirmationMessage) {
     confirmationMessage.remove();
   }
@@ -271,7 +279,9 @@ function displayMessage(sender, message, callback) {
 }
 
 function fillInput(suggestion) {
-  const confirmationMessage = document.querySelector(".confirmation-prompt-message");
+  const confirmationMessage = document.querySelector(
+    ".confirmation-prompt-message"
+  );
   if (confirmationMessage) {
     confirmationMessage.remove();
     isDeleting = false; // Reset the deletion flag
