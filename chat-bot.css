@@ -6,10 +6,12 @@ body {
   letter-spacing: 1.5;
   line-height: 1.28581;
 }
+
 .bg-close {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40px' height='40px' viewbox='0 0 40 40'%3E%3Cpath d='M 10,10 L 30,30 M 30,10 L 10,30' stroke='white' stroke-width='3' stroke-linecap='butt' /%3E%3C/svg%3E");
   background-size: 100%;
 }
+
 .bpw-header-container {
   background-color: #6675fa;
   color: white;
@@ -102,6 +104,7 @@ body {
   border-radius: 50%;
   margin-right: 10px;
   background-size: cover;
+  flex-shrink: 0;
 }
 
 .message.user .profile-pic {
@@ -123,6 +126,7 @@ body {
   text-align: left;
   border-radius: 10px;
 }
+
 .confirmation-message {
   display: flex;
   align-items: center;
@@ -182,13 +186,15 @@ body {
 
 .input-section-wrapper {
   display: flex;
+  position: fixed;
   flex-direction: column;
   justify-content: flex-end;
   flex-grow: 1;
+  width: 100%;
+  bottom: 0;
 }
 
 .input-section {
-  position: relative;
   width: 100%;
   background-color: white;
   display: flex;
@@ -327,7 +333,7 @@ body {
   z-index: 1000;
   transform: scale(0);
   opacity: 0;
-  display: flex;
+  display: grid;
   flex-direction: column;
 }
 
@@ -337,7 +343,7 @@ body {
   overflow-y: auto; /* Scroll if needed */
   opacity: 1;
   transition: opacity 0.5s ease;
-  padding: 5px 10px;
+  padding: 5px 20px;
   border-bottom: 1px solid #edeeef;
   margin-bottom: 20px;
 }
@@ -461,5 +467,64 @@ body {
   }
   to {
     transform: translateY(0);
+  }
+}
+@media (max-width: 360px) {
+  .bpw-suggestions {
+    font-size: 12px;
+  }
+  body {
+    font-size: 12px;
+  }
+  .dotsContainer {
+    margin-bottom: 22px;
+  }
+}
+/* Media queries for responsiveness */
+@media (max-width: 520px) {
+  #chat {
+    width: 100%;
+    bottom: 0;
+    right: 0;
+    left: 0; /* Remove left margin */
+    height: 100%;
+    border-radius: 0;
+  }
+  .bpw-suggestions {
+    margin-bottom: 10px;
+  }
+  .dotsContainer {
+    margin-top: 53px;
+  }
+
+  .message-content {
+    max-width: 90%;
+  }
+
+  .bpw-composer-container {
+    margin: 0 10px;
+    padding: 5px;
+  }
+
+  .bpw-composer textarea {
+    font-size: 12px;
+  }
+
+  .bpw-composer button i {
+    font-size: 16px;
+  }
+
+  .message {
+    margin: 10px 15px; /* Adjust margin for messages */
+  }
+
+  .message .profile-pic {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px; /* Adjust margin for profile pics */
+  }
+
+  .message.user .profile-pic {
+    margin-left: 5px; /* Adjust margin for user profile pics */
   }
 }
