@@ -473,6 +473,9 @@ body {
   .bpw-suggestions {
     font-size: 12px;
   }
+  .bpw-header-container {
+    border-radius: 0px;
+  }
   body {
     font-size: 12px;
   }
@@ -480,6 +483,7 @@ body {
     margin-bottom: 22px;
   }
 }
+
 /* Media queries for responsiveness */
 @media (max-width: 520px) {
   #chat {
@@ -490,6 +494,10 @@ body {
     height: 100%;
     border-radius: 0;
   }
+  .bpw-header-container {
+    border-radius: 0px;
+  }
+
   .bpw-suggestions {
     margin-bottom: 10px;
   }
