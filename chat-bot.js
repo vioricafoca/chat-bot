@@ -1,19 +1,28 @@
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState !== 'loading') {
+  initialize();
+} else {
+  document.addEventListener('DOMContentLoaded', initialize);
+}
+
+function initialize() {
   const deleteButton = document.getElementById("btn-delete");
   deleteButton.addEventListener("click", () => {
     isDeleting = true; // Set the flag to indicate a deletion process
     showConfirmationPrompt();
   });
+
   const userInput = document.getElementById("user-input");
   userInput.addEventListener("input", handleInputChange);
+
   const sendButton = document.getElementById("send-button");
   sendButton.addEventListener("click", handleUserInput);
+
   userInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
       handleUserInput();
     }
   });
-});
+}
 
 let isSending = false; // Add a flag to track the sending status
 let isDeleting = false; // Add a flag to track the deletion status
